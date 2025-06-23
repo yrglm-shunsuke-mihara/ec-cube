@@ -1,0 +1,17 @@
+modules:
+    config:
+        WebDriver:
+            host: '127.0.0.1'
+            port: 9515
+            url: 'http://127.0.0.1:8000'
+            browser: chrome
+            window_size: 1680x3000
+            wait: 30
+            capabilities:
+                goog:chromeOptions:
+                    args: ["--headless", "--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"]
+                    prefs:
+                        download.default_directory: '%PWD%/codeception/_support/_downloads'
+        MailCatcher:
+            url: '127.0.0.1'
+            port: 1080 

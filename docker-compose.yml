@@ -67,3 +67,4 @@ services:
       - "1025:1025"
     networks:
       - backend
+

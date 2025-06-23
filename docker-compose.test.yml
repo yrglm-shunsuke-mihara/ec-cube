@@ -1,0 +1,43 @@
+version: "3"
+
+networks:
+  backend:
+    driver: bridge
+
+services:
+  ### PostgreSQL for Testing ##################################
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: eccube_db
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  ### Mailcatcher ##################################
+  mailcatcher:
+    image: schickling/mailcatcher
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - backend
+
+  ### Chrome for Selenium ##################################
+  chrome:
+    image: selenium/standalone-chrome:latest
+    ports:
+      - "4444:4444"
+    environment:
+      - VNC_NO_PASSWORD=1
+    networks:
+      - backend
+    shm_size: 2gb 
