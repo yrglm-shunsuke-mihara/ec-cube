@@ -22,11 +22,12 @@ class SEC01CSRFCest
 {
     public function _before(AcceptanceTester $I)
     {
-        $I->loginAsAdmin();
     }
 
     public function _after(AcceptanceTester $I)
     {
+        $I->resetCookie('PHPSESSID');
+        $I->amOnPage('/admin/logout');
     }
 
     /**
@@ -36,6 +37,7 @@ class SEC01CSRFCest
     {
         $I->wantTo('SEC0101-UC01-T01 CSRF攻撃対策 - 管理画面商品編集');
         
+        $I->loginAsAdmin();
         $I->amOnPage('/admin/product/product/1/edit');
         
         $csrfToken = $I->grabValueFrom('input[name="_token"]');
@@ -69,8 +71,6 @@ class SEC01CSRFCest
         
         $faker = Fixtures::get('faker');
         
-        $I->logoutAsAdmin();
-        
         $I->amOnPage('/entry');
         
         $I->sendPOST('/entry', [
@@ -100,6 +100,7 @@ class SEC01CSRFCest
     {
         $I->wantTo('SEC0101-UC01-T03 CSRF攻撃対策 - 管理画面顧客削除');
         
+        $I->loginAsAdmin();
         $I->amOnPage('/admin/customer');
         
         $I->sendPOST('/admin/customer/1/delete', [
@@ -116,6 +117,7 @@ class SEC01CSRFCest
     {
         $I->wantTo('SEC0101-UC01-T04 CSRF攻撃対策 - 管理画面受注ステータス変更');
         
+        $I->loginAsAdmin();
         $I->amOnPage('/admin/order');
         
         $I->sendPOST('/admin/order/1/edit', [
