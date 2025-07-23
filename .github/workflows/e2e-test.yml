@@ -12,7 +12,7 @@ jobs:
       matrix:
         php: [ 8.3 ]
         db: [ pgsql ]
-        group: [ 'admin01', 'admin02', 'admin03', 'front', 'restrict-fileupload', 'change-display-order', 'installer' ]
+        group: [ 'admin01', 'admin02', 'admin03', 'front', 'restrict-fileupload', 'change-display-order', 'installer', 'security' ]
         include:
           - db: pgsql
             database_url: postgres://postgres:password@127.0.0.1:5432/eccube_db
@@ -31,6 +31,8 @@ jobs:
             app_env: 'codeception'
           - group: 'installer'
             app_env: 'install'
+          - group: 'security'
+            app_env: 'codeception'
     services:
       postgres:
         image: postgres:14
