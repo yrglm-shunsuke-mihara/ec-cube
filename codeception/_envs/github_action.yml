@@ -6,6 +6,7 @@ modules:
             url: 'http://127.0.0.1:8000'
             capabilities:
                 goog:chromeOptions:
+                    args: ["--no-sandbox", "--disable-gpu", "--disable-dev-shm-usage", "--disable-extensions", "--disable-background-timer-throttling"]
                     prefs:
                         download.default_directory: '%GITHUB_WORKSPACE%/codeception/_support/_downloads'
             wait: 30
