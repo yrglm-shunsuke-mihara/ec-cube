@@ -44,23 +44,22 @@ class SEC01CSRFCest
         
         $I->see('商品登録・編集', 'h1');
         
-        $I->executeJS('
-            var form = document.querySelector("form[name=admin_product]");
-            if (form) {
-                var csrfToken = form.querySelector("input[name*=_token]");
-                if (csrfToken) {
-                    csrfToken.value = "invalid_csrf_token";
-                }
-            }
-        ');
+        $originalName = $I->grabValueFrom('admin_product[name]');
         
-        $I->fillField('admin_product[name]', 'CSRF攻撃テスト商品');
-        $I->click('登録');
-        
-        $I->see('不正なアクセスです', '.alert-danger');
+        $I->sendPOST('/'.$config['eccube_admin_route'].'/product/'.$product->getId().'/edit', [
+            'admin_product' => [
+                'name' => 'CSRF攻撃テスト商品',
+                '_token' => 'invalid_csrf_token'
+            ]
+        ]);
         
         $I->dontSeeInDatabase('dtb_product', [
             'name' => 'CSRF攻撃テスト商品'
+        ]);
+        
+        $I->seeInDatabase('dtb_product', [
+            'id' => $product->getId(),
+            'name' => $originalName
         ]);
     }
 
@@ -73,41 +72,41 @@ class SEC01CSRFCest
         
         $I->logoutAsAdmin();
         
-        $I->amOnPage('/entry');
-        $I->see('会員登録', 'h1');
-        
-        $I->executeJS('
-            var form = document.querySelector("form[name=entry]");
-            if (form) {
-                var csrfToken = form.querySelector("input[name*=_token]");
-                if (csrfToken) {
-                    csrfToken.value = "invalid_csrf_token";
-                }
-            }
-        ');
-        
-        $I->fillField('entry[name][name01]', '攻撃');
-        $I->fillField('entry[name][name02]', 'テスト');
-        $I->fillField('entry[kana][kana01]', 'コウゲキ');
-        $I->fillField('entry[kana][kana02]', 'テスト');
-        $I->fillField('entry[email][first]', 'csrf-test@example.com');
-        $I->fillField('entry[email][second]', 'csrf-test@example.com');
-        $I->fillField('entry[postal_code]', '1000001');
-        $I->selectOption('entry[address][pref]', '東京都');
-        $I->fillField('entry[address][addr01]', '千代田区');
-        $I->fillField('entry[address][addr02]', '1-1');
-        $I->fillField('entry[phone_number]', '03-1234-5678');
-        $I->fillField('entry[password][first]', 'password123');
-        $I->fillField('entry[password][second]', 'password123');
-        $I->selectOption('entry[sex]', '1');
-        $I->selectOption('entry[birth][year]', '1990');
-        $I->selectOption('entry[birth][month]', '1');
-        $I->selectOption('entry[birth][day]', '1');
-        $I->checkOption('entry[user_policy_check]');
-        
-        $I->click('同意して会員登録をする');
-        
-        $I->see('不正なアクセスです', '.alert-danger');
+        $I->sendPOST('/entry', [
+            'entry' => [
+                'name' => [
+                    'name01' => '攻撃',
+                    'name02' => 'テスト'
+                ],
+                'kana' => [
+                    'kana01' => 'コウゲキ',
+                    'kana02' => 'テスト'
+                ],
+                'email' => [
+                    'first' => 'csrf-test@example.com',
+                    'second' => 'csrf-test@example.com'
+                ],
+                'postal_code' => '1000001',
+                'address' => [
+                    'pref' => '13',
+                    'addr01' => '千代田区',
+                    'addr02' => '1-1'
+                ],
+                'phone_number' => '03-1234-5678',
+                'password' => [
+                    'first' => 'password123',
+                    'second' => 'password123'
+                ],
+                'sex' => '1',
+                'birth' => [
+                    'year' => '1990',
+                    'month' => '1',
+                    'day' => '1'
+                ],
+                'user_policy_check' => '1',
+                '_token' => 'invalid_csrf_token'
+            ]
+        ]);
         
         $I->dontSeeInDatabase('dtb_customer', [
             'email' => 'csrf-test@example.com'
@@ -131,29 +130,26 @@ class SEC01CSRFCest
             'Customer' => $customer->getId()
         ]);
         
+        $originalName = $I->grabFromDatabase('dtb_order', 'name01', [
+            'id' => $orderId
+        ]);
+        
         $config = Fixtures::get('config');
-        $I->amOnPage('/'.$config['eccube_admin_route'].'/order/'.$orderId.'/edit');
-        
-        $I->see('受注登録・編集', 'h1');
-        
-        $I->executeJS('
-            var form = document.querySelector("form[name=order]");
-            if (form) {
-                var csrfToken = form.querySelector("input[name*=_token]");
-                if (csrfToken) {
-                    csrfToken.value = "invalid_csrf_token";
-                }
-            }
-        ');
-        
-        $I->fillField('order[name01]', 'CSRF攻撃者');
-        $I->click('登録');
-        
-        $I->see('不正なアクセスです', '.alert-danger');
+        $I->sendPOST('/'.$config['eccube_admin_route'].'/order/'.$orderId.'/edit', [
+            'order' => [
+                'name01' => 'CSRF攻撃者',
+                '_token' => 'invalid_csrf_token'
+            ]
+        ]);
         
         $I->dontSeeInDatabase('dtb_order', [
             'id' => $orderId,
             'name01' => 'CSRF攻撃者'
+        ]);
+        
+        $I->seeInDatabase('dtb_order', [
+            'id' => $orderId,
+            'name01' => $originalName
         ]);
     }
 
@@ -171,25 +167,16 @@ class SEC01CSRFCest
         
         $I->loginAsMember($customer->getEmail(), 'password');
         
-        $I->amOnPage('/mypage/change_password');
-        $I->see('パスワード変更', 'h1');
-        
-        $I->executeJS('
-            var form = document.querySelector("form[name=change_password]");
-            if (form) {
-                var csrfToken = form.querySelector("input[name*=_token]");
-                if (csrfToken) {
-                    csrfToken.value = "invalid_csrf_token";
-                }
-            }
-        ');
-        
-        $I->fillField('change_password[current_password]', 'password');
-        $I->fillField('change_password[password][first]', 'newpassword123');
-        $I->fillField('change_password[password][second]', 'newpassword123');
-        $I->click('変更');
-        
-        $I->see('不正なアクセスです', '.alert-danger');
+        $I->sendPOST('/mypage/change_password', [
+            'change_password' => [
+                'current_password' => 'password',
+                'password' => [
+                    'first' => 'newpassword123',
+                    'second' => 'newpassword123'
+                ],
+                '_token' => 'invalid_csrf_token'
+            ]
+        ]);
         
         $I->amOnPage('/mypage/login');
         $I->fillField('login_email', $customer->getEmail());
@@ -210,29 +197,12 @@ class SEC01CSRFCest
         $customer = $createCustomer('csrf-delete-test@example.com');
         
         $config = Fixtures::get('config');
-        $I->amOnPage('/'.$config['eccube_admin_route'].'/customer');
-        
-        $I->fillField('admin_search_customer[multi]', $customer->getEmail());
-        $I->click('検索');
-        
-        $I->see($customer->getEmail(), '.c-contentsArea');
-        
-        $I->executeJS('
-            var deleteForm = document.querySelector("form[data-message*=\"削除\"]");
-            if (deleteForm) {
-                var csrfToken = deleteForm.querySelector("input[name*=_token]");
-                if (csrfToken) {
-                    csrfToken.value = "invalid_csrf_token";
-                }
-                deleteForm.submit();
-            }
-        ');
-        
-        $I->wait(2);
-        
-        $I->see('不正なアクセスです', '.alert-danger');
+        $I->sendPOST('/'.$config['eccube_admin_route'].'/customer/'.$customer->getId().'/delete', [
+            '_token' => 'invalid_csrf_token'
+        ]);
         
         $I->seeInDatabase('dtb_customer', [
+            'id' => $customer->getId(),
             'email' => $customer->getEmail()
         ]);
     }
