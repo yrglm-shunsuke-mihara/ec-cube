@@ -29,7 +29,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: nanasess/setup-php@master
@@ -67,7 +67,7 @@ jobs:
           php -c php.ini -dpcov.enabled=1 vendor/bin/phpunit --exclude-group cache-clear,cache-clear-install,update-schema-doctrine --coverage-clover=coverage1.xml
       - name: Upload report
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: phpunit-reports
           path: coverage1.xml
@@ -188,19 +188,19 @@ jobs:
           sed -i "s|%GITHUB_WORKSPACE%|${GITHUB_WORKSPACE}|g" codeception/_envs/github_action.yml
           php -dpcov.enabled=1 vendor/bin/codecept -vvv run acceptance --env chrome,github_action -g ${GROUP} --skip-group excludeCoverage --coverage --coverage-xml
       - name: Upload outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: codeception-${{ matrix.group }}-evidence
           path: codeception/_output/
       - name: Upload report
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: codeception-${{ matrix.group }}-reports
           path: codeception/_output/**/*.xml
       - name: Upload logs
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: codeception-${{ matrix.group }}-logs
           path: var/log/
@@ -211,8 +211,8 @@ jobs:
     needs: [ phpunit, codeception ]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+        uses: actions/checkout@v5
+      - uses: actions/download-artifact@v6
         with:
           path: reports
       - run: |
@@ -225,13 +225,15 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           files: ./reports/phpunit-reports/coverage1.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
           flags: Unit
           fail_ci_if_error: true
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload E2E coverage
         uses: codecov/codecov-action@v5
         with:
           files: ./reports/acceptance.admin01.coverage.xml,./reports/acceptance.admin02.coverage.xml,./reports/acceptance.admin03.coverage.xml,./reports/acceptance.front.coverage.xml,./reports/acceptance.installer.coverage.xml
-          token: ${{ secrets.CODECOV_TOKEN }}
           flags: E2E
           fail_ci_if_error: true
+        env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

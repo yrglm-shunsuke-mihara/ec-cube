@@ -298,7 +298,7 @@ class Generator
      * CustomerAddress を生成して返す.
      *
      * @param Customer $Customer 対象の Customer インスタンス
-     * @param boolean $is_nonmember 非会員の場合 true
+     * @param bool $is_nonmember 非会員の場合 true
      *
      * @return CustomerAddress
      */
@@ -388,7 +388,7 @@ class Generator
      * $product_class_num = 0 とすると商品規格の無い商品を生成する.
      *
      * @param string $product_name 商品名. null の場合はランダムな文字列が生成される.
-     * @param integer $product_class_num 商品規格の生成数
+     * @param int $product_class_num 商品規格の生成数
      * @param bool $with_image 画像を生成する場合 true, 生成しない場合 false
      *
      * @return Product
@@ -477,7 +477,7 @@ class Generator
                 ->setProduct($Product)
                 ->setSaleType($SaleType)
                 ->setStockUnlimited(false)
-                ->setPrice02($faker->randomNumber(5))
+                ->setPrice02((string) $faker->randomNumber(5))
                 ->setDeliveryDuration($DeliveryDurations[$faker->numberBetween(0, 8)])
                 ->setCreateDate(new \DateTime()) // FIXME
                 ->setUpdateDate(new \DateTime())
@@ -525,7 +525,7 @@ class Generator
             ->setProductStock($ProductStock)
             ->setProduct($Product)
             ->setSaleType($SaleType)
-            ->setPrice02($faker->randomNumber(5))
+            ->setPrice02((string) $faker->randomNumber(5))
             ->setDeliveryDuration($DeliveryDurations[$faker->numberBetween(0, 8)])
             ->setStockUnlimited(false)
             ->setCreateDate(new \DateTime()) // FIXME
@@ -577,9 +577,9 @@ class Generator
      * @param Customer $Customer Customer インスタンス
      * @param array $ProductClasses 明細行となる ProductClass の配列
      * @param Delivery $Delivery Delivery インスタンス
-     * @param integer $add_charge Order に加算される手数料
-     * @param integer $add_discount Order に加算される値引き額
-     * @param integer $statusTypeId OrderStatus:id
+     * @param int $add_charge Order に加算される手数料
+     * @param int $add_discount Order に加算される値引き額
+     * @param int $statusTypeId OrderStatus:id
      *
      * @return Order
      */
@@ -676,8 +676,8 @@ class Generator
                 ->setProduct($Product)
                 ->setProductName($Product->getName())
                 ->setProductCode($ProductClass->getCode())
-                ->setPrice($ProductClass->getPrice02())
-                ->setQuantity($quantity)
+                ->setPrice((string) $ProductClass->getPrice02())
+                ->setQuantity((string) $quantity)
                 ->setTaxType($Taxation) // 課税
                 ->setTaxDisplayType($TaxExclude) // 税別
                 ->setOrderItemType($ItemProduct) // 商品明細
@@ -703,8 +703,8 @@ class Generator
         $OrderItemDeliveryFee->setShipping($Shipping)
             ->setOrder($Order)
             ->setProductName('送料')
-            ->setPrice($fee)
-            ->setQuantity(1)
+            ->setPrice((string) $fee)
+            ->setQuantity('1')
             ->setTaxType($Taxation) // 課税
             ->setTaxDisplayType($TaxInclude) // 税込
             ->setOrderItemType($ItemDeliveryFee); // 送料明細
@@ -717,8 +717,8 @@ class Generator
             // ->setShipping($Shipping) // Shipping には登録しない
             ->setOrder($Order)
             ->setProductName('手数料')
-            ->setPrice($charge)
-            ->setQuantity(1)
+            ->setPrice((string) $charge)
+            ->setQuantity('1')
             ->setTaxType($Taxation) // 課税
             ->setTaxDisplayType($TaxInclude) // 税込
             ->setOrderItemType($ItemCharge); // 手数料明細
@@ -731,8 +731,8 @@ class Generator
             // ->setShipping($Shipping) // Shipping には登録しない
             ->setOrder($Order)
             ->setProductName('値引き')
-            ->setPrice($discount * -1)
-            ->setQuantity(1)
+            ->setPrice((string) ($discount * -1))
+            ->setQuantity('1')
             ->setTaxType($NonTaxable) // 不課税
             ->setTaxDisplayType($TaxInclude) // 税込
             ->setOrderItemType($ItemDiscount); // 値引き明細
@@ -744,8 +744,8 @@ class Generator
             $OrderItemPoint
                 ->setOrder($Order)
                 ->setProductName('ポイント')
-                ->setPrice($point * -1)
-                ->setQuantity(1)
+                ->setPrice((string) ($point * -1))
+                ->setQuantity('1')
                 ->setTaxType($NonTaxable)
                 ->setTaxDisplayType($TaxInclude)
                 ->setOrderItemType($ItemPoint);
@@ -764,9 +764,9 @@ class Generator
      *
      * @param Delivery $Delivery デフォルトで設定する配送オブジェクト
      * @param string $method 支払い方法名称
-     * @param integer $charge 手数料
-     * @param integer $rule_min 下限金額
-     * @param integer $rule_max 上限金額
+     * @param int $charge 手数料
+     * @param int $rule_min 下限金額
+     * @param int $rule_max 上限金額
      *
      * @return Payment
      */
@@ -804,7 +804,7 @@ class Generator
     /**
      * 配送方法を生成する.
      *
-     * @param integer $delivery_time_max_pattern 配送時間の最大パターン数
+     * @param int $delivery_time_max_pattern 配送時間の最大パターン数
      *
      * @return Delivery
      */
