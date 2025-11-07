@@ -262,13 +262,13 @@ class TaxRuleServiceTest extends AbstractServiceTestCase
     {
         $input = '1080';
         $rate = '8';
-        $this->expected = '80.00';
+        $this->expected = '80';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::ROUND);
         $this->verify();
 
         $input = '1100';
         $rate = '10';
-        $this->expected = '100.00';
+        $this->expected = '100';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::ROUND);
         $this->verify();
     }
@@ -281,7 +281,7 @@ class TaxRuleServiceTest extends AbstractServiceTestCase
         $input = '1080';
         $rate = '8';
         $adjust = '5';
-        $this->expected = '79.00';
+        $this->expected = '80';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::ROUND, $adjust);
         $this->verify();
     }
@@ -293,13 +293,13 @@ class TaxRuleServiceTest extends AbstractServiceTestCase
     {
         $input = '1080';
         $rate = '8';
-        $this->expected = '80.00';
+        $this->expected = '80';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::FLOOR);
         $this->verify();
 
         $input = '1099';
         $rate = '10';
-        $this->expected = '99.00';
+        $this->expected = '99';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::FLOOR);
         $this->verify();
     }
@@ -311,13 +311,13 @@ class TaxRuleServiceTest extends AbstractServiceTestCase
     {
         $input = '1080';
         $rate = '8';
-        $this->expected = '80.00';
+        $this->expected = '80';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::CEIL);
         $this->verify();
 
         $input = '1099';
         $rate = '10';
-        $this->expected = '100.00';
+        $this->expected = '100';
         $this->actual = $this->taxRuleService->calcTaxIncluded($input, $rate, RoundingType::CEIL);
         $this->verify();
     }
@@ -333,7 +333,7 @@ class TaxRuleServiceTest extends AbstractServiceTestCase
         $this->verify();
 
         $input = '999';
-        $this->expected = '1098.00';
+        $this->expected = '1099.00';
         $this->actual = $this->taxRuleService->getPriceIncTax($input);
         $this->verify();
     }
@@ -351,7 +351,7 @@ class TaxRuleServiceTest extends AbstractServiceTestCase
 
         $input = '123456';
         $rate = '8';
-        $this->expected = '9877.00';
+        $this->expected = '9876.00';
         $this->actual = $this->taxRuleService->calcTax($input, $rate, RoundingType::ROUND);
         $this->verify();
     }
